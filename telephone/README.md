@@ -1,5 +1,5 @@
 # Welcome to Telephone Game!
-This is a very simple toy program to get folks used to navigating a rust repo and editing source files
+This is a very simple toy program to get folks used to navigating a rust repo and editing source files. It is based  on the classic childhood game of [telephone](https://en.wikipedia.org/wiki/Telephone_game), except with intentionally bad actors!
 
 ## To compile
 Ensure you have cargo and all the various rust compilation tools installed (see [rustup.rs](https://rustup.rs/)). Then, to build the source files, run the following in this directory:
