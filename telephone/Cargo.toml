@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "telephone_game",
+    "modifiers",
+]
+
