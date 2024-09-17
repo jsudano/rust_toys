@@ -42,15 +42,16 @@ impl From<&str> for Message {
     }
 }
 
-/// The thing which garbles
+/// The "template" for a thing which garbles
 pub trait Garbler {
     fn garble(&self, message: Message) -> Message;
 }
 
 /// Removes every third word in a `Message`
-pub struct RemoveThird;
+/// Note that this is an empty struct, simply because we can't impl a trait without an assocaited struct
+pub struct ThirdRemover;
 
-impl Garbler for RemoveThird {
+impl Garbler for ThirdRemover {
     fn garble(&self, message: Message) -> Message {
         let new_words = message
             .words
@@ -108,8 +109,9 @@ impl Garbler for TemporalDisplacer {
 /// Note, the return type must be `Box`ed as return types must be concrete (not traits)
 pub fn get_random_garbler() -> Box<dyn Garbler> {
     match rand::thread_rng().gen_range(0..3) {
-        0 => Box::new(RemoveThird),
+        0 => Box::new(ThirdRemover),
         _ => Box::new(PairSwapper),
+        // TODO once you have implemented Garbler for TemporalDisplacer, uncomment this so you can use it in the game!
         // _ => Box::new(TemporalDisplacer::default()),
     }
 }
@@ -117,11 +119,11 @@ pub fn get_random_garbler() -> Box<dyn Garbler> {
 // Unit tests live here!
 #[cfg(test)]
 mod tests {
-    use crate::{Garbler, Message, PairSwapper, RemoveThird, TemporalDisplacer};
+    use crate::{Garbler, Message, PairSwapper, TemporalDisplacer, ThirdRemover};
 
     #[test]
     fn test_remove_third() {
-        let rt = RemoveThird;
+        let rt = ThirdRemover;
 
         let msg = Message::default();
 
