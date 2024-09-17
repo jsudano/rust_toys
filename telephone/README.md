@@ -2,7 +2,7 @@
 This is a very simple toy program to get folks used to navigating a rust repo and editing source files
 
 ## To compile
-Ensure you have cargo and all the various rust compilation tools installed (see [rustup.rs]([url](https://rustup.rs/)). Then, to build the source files, run the following in this directory:
+Ensure you have cargo and all the various rust compilation tools installed (see [rustup.rs](https://rustup.rs/). Then, to build the source files, run the following in this directory:
 ```sh
 cargo build
 ```
