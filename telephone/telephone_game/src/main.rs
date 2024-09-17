@@ -1,10 +1,18 @@
 use std::io::stdin;
 
-use modifiers::{get_random_garbler, Message};
+use modifiers::{get_random_garbler, Garbler, Message};
 
 fn clear_terminal() {
     // prints the ascii control character to clear the screen
     print!("{}[2J", 27 as char);
+}
+
+fn perform_garbles(message: Message, garblers: impl Iterator<Item = Box<dyn Garbler>>) -> Message {
+    let mut garbled_message: Message = message.into();
+    for garbler in garblers {
+        garbled_message = garbler.garble(garbled_message);
+    }
+    garbled_message
 }
 
 // runs a round of telephone!
@@ -13,7 +21,7 @@ fn telephone_game() -> Result<(), anyhow::Error> {
     println!("Number of callers? (enter a number)");
     let mut num_callers_str = String::new();
     stdin().read_line(&mut num_callers_str)?;
-    let num_callers = num_callers_str.trim().parse::<i32>()?;
+    let num_callers = num_callers_str.trim().parse::<u32>()?;
 
     // ask the user for a message to be garbled
     println!("Enter your message! (whitespaced ascii only please)");
@@ -22,10 +30,7 @@ fn telephone_game() -> Result<(), anyhow::Error> {
 
     // do the garbling
     let random_garblers = (0..num_callers).map(|_| get_random_garbler());
-    let mut garbled_message: Message = message.into();
-    for garbler in random_garblers {
-        garbled_message = garbler.garble(garbled_message);
-    }
+    let garbled_message = perform_garbles(message.into(), random_garblers);
 
     // give the user their work of art
     println!("Your message is:");

@@ -3,7 +3,9 @@ use std::fmt::{Display, Write};
 
 /// A container used to track a collection of words that makes up a `Message` to be garbled
 /// Note: we derive `Default` here which gives us `Message::default()` without having to impl the trait
-#[derive(Default)]
+///       we derive `PartialEq` here so we can compare `Message`s to each other
+///       we derive `Debug` here so we can debug-print `Message`s
+#[derive(Default, PartialEq, Debug)]
 pub struct Message {
     words: Vec<String>,
 }
@@ -47,6 +49,16 @@ pub trait Garbler {
     fn garble(&self, message: Message) -> Message;
 }
 
+/// Passes on the message with no changes
+pub struct GoodListener;
+
+impl Garbler for GoodListener {
+    fn garble(&self, message: Message) -> Message {
+        // good listeners pass on the message as heard
+        message
+    }
+}
+
 /// Removes every third word in a `Message`
 /// Note that this is an empty struct, simply because we can't impl a trait without an assocaited struct
 pub struct ThirdRemover;
@@ -60,7 +72,8 @@ impl Garbler for ThirdRemover {
             .filter_map(|(i, word)| if i % 3 == 2 { None } else { Some(word.clone()) })
             .collect();
 
-        // note that this consumes `message` and returns a new `Message` instead of mutating it
+        // note that this consumes `message` and returns a new `Message` instead of mutating it, this doesn't leak
+        // memory as `message` will be dropped at the end of the expression since it is "owned" by this `garble` fn
         Message { words: new_words }
     }
 }
@@ -77,7 +90,7 @@ impl Garbler for PairSwapper {
             message.words.swap(i, i + 1);
         }
 
-        // note that this mutes message and returns it, instead of consuming it
+        // note that this mutates message and returns it, instead of consuming it
         message
     }
 }
@@ -108,8 +121,9 @@ impl Garbler for TemporalDisplacer {
 /// Returns a random one of our three garblers
 /// Note, the return type must be `Box`ed as return types must be concrete (not traits)
 pub fn get_random_garbler() -> Box<dyn Garbler> {
-    match rand::thread_rng().gen_range(0..3) {
-        0 => Box::new(ThirdRemover),
+    match rand::thread_rng().gen_range(0..4) {
+        0 => Box::new(GoodListener),
+        1 => Box::new(ThirdRemover),
         _ => Box::new(PairSwapper),
         // TODO once you have implemented Garbler for TemporalDisplacer, uncomment this so you can use it in the game!
         // _ => Box::new(TemporalDisplacer::default()),
@@ -163,6 +177,7 @@ mod tests {
 
     #[test]
     fn test_temporal_displacer() {
+        // TODO this test will fail because `Garbler` is not properly implemented for `TemporalDisplacer!`
         let td = TemporalDisplacer::default();
 
         let msg = Message::default();
