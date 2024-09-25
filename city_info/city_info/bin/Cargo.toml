@@ -1,0 +1,13 @@
+[package]
+name = "city_info"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = {version = "1.39.3", features = ["full"] }
+tokio-util = "0.7.12"
+tracing = { version = "0.1.40" }
+tracing-subscriber = { version = "0.3.18", features = ["json", "env-filter"] }
+
+dispatcher = { path = "../lib/dispatcher" }
+rest_api = { path = "../lib/rest_api" }

@@ -1,0 +1,9 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "city_info/bin",
+    "city_info/lib/data_fetchers",
+    "city_info/lib/rest_api",
+    "city_info/lib/dispatcher",
+]

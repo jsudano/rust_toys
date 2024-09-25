@@ -1,0 +1,13 @@
+[package]
+name = "rest_api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.89"
+axum = "0.7.5"
+tokio = {version = "1.39.3", features = ["full"] }
+tokio-util = "0.7.12"
+tracing = { version = "0.1.40" }
+
+dispatcher = { path = "../dispatcher" }
