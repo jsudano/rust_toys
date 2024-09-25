@@ -183,14 +183,14 @@ mod tests {
         let msg = Message::default();
 
         // empty messages don't have a fifth word, append Wumpus
-        assert_eq!(td.garble(msg).to_string(), String::from("Wumpus!"));
+        assert_eq!(td.garble(msg).to_string(), String::from("Wumpus !"));
 
         let msg = Message::from("one two three");
 
         // this message didn't have a fifth word, append Wumpus
         assert_eq!(
             td.garble(msg).to_string(),
-            String::from("two one three Wumpus!")
+            String::from("one two three Wumpus !")
         );
 
         let msg = Message::from("un deux trois quatre cinq six");
@@ -198,7 +198,7 @@ mod tests {
         // this message has a fifth word, replace Wumpus
         assert_eq!(
             td.garble(msg).to_string(),
-            String::from("un deux trois quatre Wumpus six!")
+            String::from("un deux trois quatre Wumpus six !")
         );
 
         let msg = Message::from("uno dos tres cuatro cinco seis");
@@ -206,7 +206,7 @@ mod tests {
         // "cinq" was the fifth word of the last message, insert it
         assert_eq!(
             td.garble(msg).to_string(),
-            String::from("uno dos tres cuatro cinq seis!")
+            String::from("uno dos tres cuatro cinq seis !")
         );
 
         let msg = Message::from("eins zwei drei vier funf");
@@ -214,7 +214,7 @@ mod tests {
         // "cinco" was the fifth word of the last message, insert it
         assert_eq!(
             td.garble(msg).to_string(),
-            String::from("eins zwei drei vier cinco!")
+            String::from("eins zwei drei vier cinco !")
         );
 
         let msg = Message::from("uno due tre quattro");
@@ -222,7 +222,7 @@ mod tests {
         // this message doesn't have a fifth word, append Wumpus
         assert_eq!(
             td.garble(msg).to_string(),
-            String::from("uno due tre quattro Wumpus!")
+            String::from("uno due tre quattro Wumpus !")
         );
     }
 }
