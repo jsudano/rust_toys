@@ -9,7 +9,7 @@ fn clear_terminal() {
 
 fn perform_garbles(message: Message, garblers: impl Iterator<Item = Box<dyn Garbler>>) -> Message {
     let mut garbled_message: Message = message.into();
-    for garbler in garblers {
+    for mut garbler in garblers {
         garbled_message = garbler.garble(garbled_message);
     }
     garbled_message
