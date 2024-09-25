@@ -62,16 +62,32 @@ struct WeatherEntry {
     temp_c: String,
     #[serde(rename = "FeelsLikeC")]
     feels_like_c: String,
+    #[serde(rename = "winddir16Point")]
+    wind_dir_16_point: String,
+    #[serde(rename = "windspeedKmph")]
+    windspeed_kmph: String,
+    #[serde(rename = "weatherDesc")]
+    weather_desc: Vec<WeatherDescription>,
+}
+
+#[derive(Deserialize, Default)]
+struct WeatherDescription {
+    value: String,
 }
 
 impl Display for WeatherEntry {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        // TODO: implement me! You'll need to parse some extra fields out of the
-        // API's response by editing `WeatherEntry` above. Try hitting
-        // <http://wttr.in/SanJose?format=j1> in your browser to see what fields are
-        // available to you, and check out the serde docs <https://serde.rs/container-attrs.html>
-        // for pointers on deserialization (`city_stats_api.rs` also provides a decent template)
-        f.write_str("Incomplete!")
+        f.write_fmt(format_args!(
+            "Weather at {}: {}C (feels like {}C) and {} with winds from {} at {}kph",
+            self.observation_time,
+            self.temp_c,
+            self.feels_like_c,
+            self.weather_desc
+                .first()
+                .map_or("none", |d| d.value.as_ref()),
+            self.wind_dir_16_point,
+            self.windspeed_kmph
+        ))
     }
 }
 
@@ -79,7 +95,7 @@ impl Display for WeatherEntry {
 mod tests {
     use crate::weather_api::query_weather_api;
 
-    use super::WeatherEntry;
+    use super::{WeatherDescription, WeatherEntry};
 
     #[tokio::test]
     async fn test_query_api() {
@@ -97,6 +113,11 @@ mod tests {
             observation_time: String::from("10:09 PM"),
             temp_c: String::from("20"),
             feels_like_c: String::from("21"),
+            wind_dir_16_point: String::from("ESE"),
+            windspeed_kmph: String::from("12"),
+            weather_desc: vec![WeatherDescription {
+                value: String::from("Sunny"),
+            }],
         };
 
         let expected_format = String::from(

@@ -45,7 +45,7 @@ fn setup_rest_app(dispatcher_handle: DispatcherHandle) -> Router {
 }
 
 /// Get city-specific info for the given city from our dispatcher
-/// Note we return (StatusCode, String) here, which axum conveniently converts
+/// Note we return `(StatusCode, String)` here, which axum conveniently converts
 /// into an HTTP response for us (<https://docs.rs/axum/latest/axum/response/index.html>)
 async fn get_city_info(
     Path(city_name): Path<String>,

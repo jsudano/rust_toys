@@ -89,8 +89,7 @@ where
     }
 
     /// Run our task, looping on input from the `request_receiver` until its corresponding sender is dropped,
-    /// or the `cancellation_token` is cancelled. This is another example of an Actor/Handle model, this time
-    /// made generic over anything that impls `CityDataSource`
+    /// or the `cancellation_token` is cancelled.
     ///
     /// Note: you may want to store `request_receiver` as a member of `self`. However, that creates a mutable
     /// reference issue where `request_receiver.recv()` requires a mutable reference to `request_receiver`,
@@ -102,13 +101,28 @@ where
         mut request_receiver: mpsc::Receiver<CityDataRequest>,
         cancellation_token: CancellationToken,
     ) {
-        // TODO uncomment me when implementing below
-        // let mut request_pool = FuturesUnordered::new();
+        let mut request_pool = FuturesUnordered::new();
 
         loop {
             tokio::select! {
-                // TODO: implement me! Hint: there should be 2 branches here, and `dispatcher/lib.rs` has a
-                // good example to follow
+                request = request_receiver.recv() => {
+                    let Some(request) = request else {
+                        tracing::info!("task receiver dropped, shutting down");
+                        break;
+                    };
+                    request_pool.push(self.handle_request(request));
+
+                },
+                Some(result) = request_pool.next(), if !request_pool.is_empty() => {
+                    match result {
+                        Ok(()) => {
+
+                        },
+                        Err(e) => {
+                            tracing::error!("Data fetch failed with error {e:?}");
+                        }
+                    }
+                },
                 () = cancellation_token.cancelled() => {
                     tracing::info!("DataSourceTask cancellation token cancelled, shutting down");
                     break;
